@@ -67,6 +67,7 @@ if True:
                 logs.log_to_file("High load detected!" + recentlogs)
             else:
                 print("No output wanted")
+                print("")
 
 
 else:
