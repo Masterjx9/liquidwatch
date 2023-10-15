@@ -1,22 +1,258 @@
 [
-    "httpd",
-    "httpd2", 
-    "apache", 
-    "mysql", 
-    "whm", 
-    "cpanel", 
-    "plesk", 
-    "interworx", 
-    "cpsrvd",
-    "php-fpm",
-    "cpanellogd"
+    {"httpd": {
+        "paths" : ["/var/log/httpd/error_log",
+                    "/var/log/httpd/access_log"]
+    }},
+    {"httpd2": {
+        "paths" : ["/var/log/httpd/error_log",
+                    "/var/log/httpd/access_log"]
+    }},
+    {"apache": {
+        "paths" : ["/var/log/httpd/error_log",
+                    "/var/log/httpd/access_log"]
+    }},
+    {"mysql": {
+        "paths" : ["/var/lib/mysql/*.err"]
+    }},
+    {"whm": {
+        "paths" : ["/var/cpanel/updatelogs/*",
+                    "/var/cpanel/logs/*",
+                    "/usr/local/cpanel/logs/*",
+                    "/usr/local/cpanel/logs/access_log",
+                    "/usr/local/cpanel/logs/error_log",
+                    "/usr/local/cpanel/logs/license_log",
+                    "/usr/local/cpanel/logs/login_log",
+                    "/usr/local/cpanel/logs/stats_log",
+                    "/usr/local/cpanel/logs/tailwatchd_log",
+                    "/usr/local/cpanel/logs/error_log",
+                    "/usr/local/cpanel/logs/cpbackup/*",
+                    "/usr/local/cpanel/logs/cpbackup/backup-*",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.error.log",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.access.log",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.output.log",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.status.log",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log.INFO",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log.ERROR",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log.WARNING",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log.DEBUG",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log.CRITICAL",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log.EMERGENCY",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log.ALERT",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log.NOTICE"
+                    ]
+    }},
+    {"cpanel": {
+        "paths" : ["/var/cpanel/updatelogs/*",
+                    "/var/cpanel/logs/*",
+                    "/usr/local/cpanel/logs/*",
+                    "/usr/local/cpanel/logs/access_log",
+                    "/usr/local/cpanel/logs/error_log",
+                    "/usr/local/cpanel/logs/license_log",
+                    "/usr/local/cpanel/logs/login_log",
+                    "/usr/local/cpanel/logs/stats_log",
+                    "/usr/local/cpanel/logs/tailwatchd_log",
+                    "/usr/local/cpanel/logs/error_log",
+                    "/usr/local/cpanel/logs/cpbackup/*",
+                    "/usr/local/cpanel/logs/cpbackup/backup-*",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.error.log",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.access.log",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.output.log",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.status.log",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log.INFO",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log.ERROR",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log.WARNING",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log.DEBUG",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log.CRITICAL",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log.EMERGENCY",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log.ALERT",
+                    "/usr/local/cpanel/logs/cpbackup_transporter.log.NOTICE"
+                    ]
+    }},
+
+
+
+
+    {"plesk": {
+        "paths" : ["/var/log/sw-cp-server/error_log",
+                    "/var/log/sw-cp-server/access_log"]
+    }},
+
+{
+        "sw-cp-server": {
+            "paths": [
+                "/var/log/sw-cp-server/error_log",
+                "/var/log/sw-cp-server/sw-engine.log"
+            ]
+        },
+        "psa": {
+            "paths": [
+                "/var/log/plesk/httpsd_access_log",
+                "/var/log/plesk/panel.log"
+            ]
+        },
+        "httpd": {
+            "paths": [
+                "/var/log/httpd/access_log",
+                "/var/log/httpd/error_log"
+            ]
+        },
+        "nginx": {
+            "paths": [
+                "/var/log/nginx/access.log",
+                "/var/log/nginx/error.log"
+            ]
+        },
+        "tomcat": {
+            "paths": ["/var/log/tomcat/"]
+        },
+        "xinetd": {
+            "paths": ["/var/log/messages"]
+        },
+        "named": {
+            "paths": ["/var/log/messages", "/var/log/syslog"]
+        },
+        "courier-imap": {
+            "paths": ["/var/log/maillog"]
+        },
+        "dovecot": {
+            "paths": ["/usr/sbin/dovecot log find"]
+        },
+        "postfix": {
+            "paths": ["/var/log/maillog"]
+        },
+        "qmail": {
+            "paths": ["/var/log/maillog"]
+        },
+        "psa-horde": {
+            "paths": ["/var/log/psa-horde/psa-horde.log"]
+        },
+        "plesk-roundcube": {
+            "paths": ["/var/log/plesk-roundcube/errors"]
+        },
+        "fail2ban": {
+            "paths": ["/var/log/fail2ban.log"]
+        },
+        "modsecurity": {
+            "paths": ["/var/log/modsec_audit.log"]
+        },
+        "plesk-php7x-fpm": {
+            "paths": ["/var/log/plesk-php7x-fpm/"]
+        },
+        "watchdog": {
+            "paths": [
+                "/usr/local/psa/var/modules/watchdog/log/wdcollect.log",
+                "/var/log/wdcollect.log",
+                "/usr/local/psa/var/modules/watchdog/log/monit.log",
+                "/var/log/plesk/modules/wdcollect.log"
+            ]
+        }
+    },
+
+
+
+
+
+
+
+
+    {"interworx":{
+        "paths": []
+    }},
+    {
+        "iworx": {
+          "paths": [
+            "/home/interworx/var/log/iworx.log",
+            "/home/interworx/var/log/error.log",
+            "/home/interworx/var/log/api.log",
+            "/home/interworx/var/log/access.log",
+            "/home/interworx/var/log/cron.log"
+          ]
+        },
+        "apache": {
+          "paths": [
+            "/var/log/httpd/",
+            "/home/{unixuser}/var/{domain.com}/logs/transfer.log",
+            "/home/{unixuser}/var/{domain.com}/logs/transfer-ssl.log",
+            "/home/{unixuser}/var/{domain.com}/logs/error.log",
+            "/home/{unixuser}/var/{domain.com}/logs/error-ssl.log"
+          ]
+        },
+        "mysqld": {
+          "paths": [
+            "/var/log/mysql/",
+            "/var/log/mariadb/"
+          ]
+        },
+        "dovecot": {
+          "paths": [
+            "/var/log/dovecot/dovecot.log"
+          ]
+        },
+        "qmail": {
+          "paths": [
+            "/var/log/smtp/current",
+            "/var/log/send/current"
+          ]
+        },
+        "spamassassin": {
+          "paths": [
+            "/var/log/maillog"
+          ]
+        },
+        "clamav": {
+          "paths": [
+            "/var/log/clamav/clamd.log",
+            "/var/log/clamav/freshclam.log"
+          ]
+        },
+        "horde": {
+          "paths": [
+            "/home/interworx/var/log/horde.log"
+          ]
+        },
+        "roundcube": {
+          "paths": [
+            "/usr/local/interworx/lib/roundcube/logs/error"
+          ]
+        },
+        "proftpd": {
+          "paths": [
+            "/var/log/proftpd/"
+          ]
+        },
+        "php-fpm": {
+          "paths": [
+            "/var/log/php-fpm/",
+            "/var/opt/remi/php{version}/log/php-fpm/error.log"
+          ]
+        },
+        "sshd": {
+          "paths": [
+            "/var/log/secure"
+          ]
+        }
+      },
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    {"interworx":{"paths":[]}}, 
+    {"cpsrvd":{"paths":[]}},
+    {"php-fpm":{"paths":[]}},
+    {"cpanellogd":{"paths":[]}}
 ]
 
-
-
-
-   
-    
-    
-  
-    
