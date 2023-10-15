@@ -1,6 +1,5 @@
 import argparse
 import psutil
-import os 
 import json
 from outputs import email, logs
 import subprocess
@@ -77,6 +76,12 @@ def monitor_system():
 if args.mode == 'once':
     monitor_system()
 elif args.mode == 'service':
+    counter = 0
     while True:
         monitor_system()
-        time.sleep(60) 
+        counter += 1
+        if counter == 3:
+            time.sleep(3600)  # Sleep for an hour
+            counter = 0  # Reset the counter
+        else:
+            time.sleep(60)
