@@ -22,53 +22,59 @@ _LiquidWatch is a lightweight Python-based monitoring tool designed especially f
    cd liquidwatch
    ```
 
-### Manual Installation 
-1. **Setup Virtual Environment**:
+### Manual Installation 🤖
+1. 🌍 **Setup Virtual Environment**:
    ```bash
    python3 -m venv .venv
    source .venv/bin/activate
    ```
 
-2. **Install Dependencies**:
+2. 📥 **Install Dependencies**:
    ```bash
    pip install psutil
    ```
 
-3. 🚀 **Run the script**:
-```bash
-python liquidwatch.py
-```
+### Automatic Installation 🚄
 
-### Automatic Installation
-
-1. **Move the service file to the systemd directory**
+1. 🔁 **Move the service file to the systemd directory**
    ```bash
    sudo cp liquidwatch.service /etc/systemd/system/
    ```
 
-2. **Reload systemd to recognize the new service**
+2. 🔄 **Reload systemd to recognize the new service**
    ```bash
    sudo systemctl daemon-reload
    ```
 
-3. **Enable the service to start on boot**
+3. ⚙️ **Enable the service to start on boot**
    ```bash
    sudo systemctl enable liquidwatch
    ```
 
-4. **Start the service**
+4. ▶️ **Start the service**
    ```bash
    sudo systemctl start liquidwatch
    ```
 
-5. **Check the status of the service**
+5. 🔍 **Check the status of the service**
    ```bash
    sudo systemctl status liquidwatch
    ```
 
+## Run the script 🚀
+- Run Once: Execute the script once to check the load.
+   ```bash
+   python liquidwatch.py --output logs --mode once
+   ```
+
+- Run as Service: Execute the script in a loop, checking every 60 seconds.
+   ```bash
+   python liquidwatch.py --output logs --mode service
+   ```
+Note: By default (if --mode is not provided), the script will run once due to the default='once' setting in the argparse definition.
 ## 🤝 Contributing
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+💡 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## 📜 License
 
