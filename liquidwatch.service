@@ -1,0 +1,11 @@
+[Unit]
+Description=LiquidWatch Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /.liquidwatch/liquidwatch.py --output logs
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

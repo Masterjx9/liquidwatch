@@ -49,25 +49,23 @@ if True:
             for path in matched_process["paths"]:
                 print(f"Fetching logs from {path} for the past 1 minute:")
                 recentlogs = subprocess.check_output(f"tail -n 100 {path} | grep '$(date +'%b %d %H:%M')'", shell=True).decode('utf-8')
-                if args.output == "email":
-                    email.send_email("Alert: High load!", "High load detected on the server." + recentlogs, "admin@example.com", "alerts@example.com", "smtp.example.com", 465, "login", "password")
-                elif args.output == "logs":
-                    logs.log_to_file("High load detected!" + recentlogs)
-                else:
-                    print("No output wanted")
-                    
+                if "-- No entries --" not in recentlogs:
+                    if args.output == "email":
+                        email.send_email("Alert: High load!", "High load detected on the server." + recentlogs, "admin@example.com", "alerts@example.com", "smtp.example.com", 465, "login", "password")
+                    elif args.output == "logs":
+                        logs.log_to_file("High load detected!" + recentlogs)
+                        
         else:
             print(f"Unwatched process causing high load detected!")
             print(f"PID: {pid}, Name: {name}, CPU%: {cpu_percent}, Executable: {exe}")
             print("Fetching logs using journalctl for the past 1 minute:")
             recentlogs = subprocess.check_output(f"journalctl -u {name} --since '1 minute ago'", shell=True).decode('utf-8')
-            if args.output == "email":
-                email.send_email("Alert: High load!", "High load detected on the server." + recentlogs, "admin@example.com", "alerts@example.com", "smtp.example.com", 465, "login", "password")
-            elif args.output == "logs":
-                logs.log_to_file("High load detected!" + recentlogs)
-            else:
-                print("No output wanted")
-                print("")
+            if "-- No entries --" not in recentlogs:
+                if args.output == "email":
+                    email.send_email("Alert: High load!", "High load detected on the server." + recentlogs, "admin@example.com", "alerts@example.com", "smtp.example.com", 465, "login", "password")
+                elif args.output == "logs":
+                    logs.log_to_file("High load detected!" + recentlogs)
+
 
 
 else:

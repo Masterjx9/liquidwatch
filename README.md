@@ -16,29 +16,55 @@ _LiquidWatch is a lightweight Python-based monitoring tool designed especially f
 
 ## 🔧 Installation
 
-1. **Clone the Repository**:
+**Clone the Repository**:
    ```bash
    git clone https://github.com/yourusername/liquidwatch.git
    cd liquidwatch
    ```
 
-2. **Setup Virtual Environment**:
+### Manual Installation 
+1. **Setup Virtual Environment**:
    ```bash
    python3 -m venv .venv
    source .venv/bin/activate
    ```
 
-3. **Install Dependencies**:
+2. **Install Dependencies**:
    ```bash
    pip install psutil
    ```
 
-## 🚀 Usage
-
-Run the script:
+3. 🚀 **Run the script**:
 ```bash
 python liquidwatch.py
 ```
+
+### Automatic Installation
+
+1. **Move the service file to the systemd directory**
+   ```bash
+   sudo cp liquidwatch.service /etc/systemd/system/
+   ```
+
+2. **Reload systemd to recognize the new service**
+   ```bash
+   sudo systemctl daemon-reload
+   ```
+
+3. **Enable the service to start on boot**
+   ```bash
+   sudo systemctl enable liquidwatch
+   ```
+
+4. **Start the service**
+   ```bash
+   sudo systemctl start liquidwatch
+   ```
+
+5. **Check the status of the service**
+   ```bash
+   sudo systemctl status liquidwatch
+   ```
 
 ## 🤝 Contributing
 
