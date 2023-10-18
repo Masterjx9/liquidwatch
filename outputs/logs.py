@@ -1,6 +1,7 @@
 from datetime import datetime
 
 def log_to_file(message, filename=None):
+    print("Logging to file...")
     if filename is None:
         filename = datetime.now().strftime('lw_%Y%m%d_%H%M.log')
     with open(filename, 'a') as f:
