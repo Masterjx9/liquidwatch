@@ -8,6 +8,7 @@ _LiquidWatch is a lightweight Python-based monitoring tool designed especially f
 - **📊 Scans Top Processes**: Pinpoints the top CPU-intensive processes at work.
 - **📋 Watchlist**: Keeps an eye on specific processes like `httpd2`, `apache`, `mysql`, `whm`, `cpanel`, `plesk`, `interworx`, and `php-fpm`.
 - **🛠 Customizable Actions**: Execute specific actions when watchlisted processes are detected.
+- ** Works with loadwatch**: It can work with loadwatch or be a replacement for loadwatch depending on your scenario.
 
 ## 📦 Prerequisites
 

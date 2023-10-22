@@ -10,7 +10,7 @@
             },
             {
               "path": "/var/log/httpd/access_log",
-              "date_format": "[%a %b %d %H:%M:%S.%f %Y]"
+              "date_format": "[%d/%b/%Y:%H:%M:%S %z]"
             }
           ]
         }
@@ -28,6 +28,20 @@
           "paths": [
             "/var/log/httpd/error_log",
             "/var/log/httpd/access_log"
+          ]
+        }
+      },
+      {
+        "apache2": {
+          "paths": [
+            {
+              "path": "/var/log/apache2/error_log",
+              "date_format": "[%a %b %d %H:%M:%S.%f %Y]"
+            },
+            {
+              "path": "/var/log/apache2/access_log",
+              "date_format": "[%d/%b/%Y:%H:%M:%S %z]"
+            }
           ]
         }
       },
