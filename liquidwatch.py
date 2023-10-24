@@ -13,9 +13,10 @@ import reader
 
 # Argument parsing
 parser = argparse.ArgumentParser(description="Monitor system load and notify based on specified output method.")
-parser.add_argument('--output', type=str, choices=['email', 'logs'], help='Output method: email or logs')
+parser.add_argument('--output', type=str, choices=['email'], help='Output method: email or logs')
 parser.add_argument('--mode', type=str, choices=['once', 'service'], default='once', help='Run mode: once or service loop')
 parser.add_argument('--loadwatchmode', type=str, choices=['true', 'false'], default='True', help='Run loadwatch or not')
+parser.add_argument('--create-summary', type=str, choices=['true', 'false'], default='True', help='Create summary or not')
 args = parser.parse_args()
 
 TESTING = True  
@@ -185,7 +186,7 @@ def monitor_system():
         # Sort processes by CPU usage percentage (descending)
         processes.sort(key=lambda x: x.info['cpu_percent'], reverse=True)
 
-        with open("watchlist.json", "r") as file:
+        with open("datasets/watchlist.json", "r") as file:
             watchlist = json.load(file)
         # watchlist_detected = False  # Flag to check if any watchlist process is detected
 
@@ -256,13 +257,13 @@ def monitor_system():
 
 
                             if "-- No entries --" not in recentlogs:
-                                if args.output == "email":
-                                    email.send_email("Alert: High load!", "High load detected on the server." + recentlogs, "admin@example.com", "alerts@example.com", "smtp.example.com", 465, "login", "password")
-                                elif args.output == "logs":
-                                    current_time = datetime.now()
-                                    formatted_time = current_time.strftime("%Y-%m-%d.%H.%M")
-                                    print(recentlogs_combined)
-                                    logs.log_to_file("High load detected!" + recentlogs_combined, f"lw_{name}_{formatted_time}.log", log_path=log_path)
+                                current_time = datetime.now()
+                                formatted_time = current_time.strftime("%Y-%m-%d.%H.%M")
+                                print(recentlogs_combined)
+                                logs.log_to_file("High load detected!" + recentlogs_combined, f"lw_{name}_{formatted_time}.log", log_path=log_path)
+                                # if args.output == "email":
+                                #     email.send_email("Alert: High load!", "High load detected on the server." + recentlogs, "admin@example.com", "alerts@example.com", "smtp.example.com", 465, "login", "password")
+     
                         else:
                             print(f"No recent logs for {name} in {path['path']}.")
                     except Exception as e:
@@ -274,14 +275,17 @@ def monitor_system():
                 print(f"PID: {pid}, Name: {name}, CPU%: {cpu_percent}, Executable: {exe}")
                 print(f"Fetching logs for {name} using journalctl for the past 1 minute:")
                 recentlogs = subprocess.check_output(f"journalctl -u {name} --since '1 minute ago'", shell=True).decode('utf-8')
-                if "-- No entries --" not in recentlogs:
-                    if args.output == "email":
-                        email.send_email("Alert: High load!", "High load detected on the server." + recentlogs, "admin@example.com", "alerts@example.com", "smtp.example.com", 465, "login", "password")
-                    elif args.output == "logs":
+                if len(recentlogs) > 0:
+                    if "-- No entries --" not in recentlogs:
                         logs.log_to_file("High load detected!" + recentlogs, log_path=log_path)
-                else:
-                    print(f"No recent logs for {name} in journalctl.")
+                        # if args.output == "email":
+                        #     email.send_email("Alert: High load!", "High load detected on the server." + recentlogs, "admin@example.com", "alerts@example.com", "smtp.example.com", 465, "login", "password")
+                    else:
+                        print(f"No recent logs for {name} in journalctl.")
 
+            # use reader function to extract meaningful data from logs
+            if args.create_summary.lower() == 'true' or args.output == "email":
+                reader.create_summary(log_path)
 
     else:
         print(f"Load is normal: {load1}")
