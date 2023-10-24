@@ -1,0 +1,18 @@
+[
+    {
+        "name" : "attempt to invoke directory as a script:",
+        "reason" : "A client tried to invoke a directory as a script, which isn't allowed."
+    },
+    {
+        "name": "Got error 'Primary script unknown'",
+        "reason": "A client tried to run an unknown script."
+    },
+    {
+        "name" : "Error dispatching request to : (polling)",
+        "reason": "It seems that the server is having a hard time dispatching requests to the PHP-FPM process. This can be caused by a number of things, including a lack of resources on the server, or a misconfiguration of PHP-FPM."
+    },
+    {
+        "name" : "reached max_children setting",
+        "reason" : "PHP ran out of child proccesses, and can't handle any more requests. The number of child proccesses will need to be raised"
+    }
+]
