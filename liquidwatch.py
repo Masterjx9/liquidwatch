@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from collections import namedtuple
 import re
 from integrations import loadwatch_functions
-import reader
+import reasons
 
 # Argument parsing
 parser = argparse.ArgumentParser(description="Monitor system load and notify based on specified output method.")
@@ -285,7 +285,7 @@ def monitor_system():
 
             # use reader function to extract meaningful data from logs
             if args.create_summary.lower() == 'true' or args.output == "email":
-                reader.create_summary(log_path)
+                reasons.create_summary(log_path)
 
     else:
         print(f"Load is normal: {load1}")
