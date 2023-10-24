@@ -5,11 +5,11 @@ from outputs import email, logs
 import subprocess
 import time
 import os 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from collections import namedtuple
 import re
 from integrations import loadwatch_functions
-
+import reader
 
 # Argument parsing
 parser = argparse.ArgumentParser(description="Monitor system load and notify based on specified output method.")
@@ -39,8 +39,6 @@ def get_date_range_in_format(date_format):
     return current_date_str, one_minute_ago_str, current_minute, one_minute_ago
 
 def get_search_patterns(date_str, date_format):
-    print(date_str)
-    print(date_format)
     # Remove timezone information from date format
     simplified_date_format = date_format.replace('%z', '')
     date_obj = datetime.strptime(date_str, simplified_date_format)
@@ -98,7 +96,9 @@ def diagnose_issue():
     if total_cpu_percent >= 50:
         print("CPU-bound issue detected")
         print(top_cpu_processes)
-        return top_cpu_processes
+        processes_causing_cpu_usage = [p for p in psutil.process_iter(['pid', 'name', 'cpu_percent']) if p.info['name'] in top_cpu_processes]
+        
+        return processes_causing_cpu_usage
 
     # 2. Check Memory-bound issues
     top_memory_processes = sorted(psutil.process_iter(['pid', 'name', 'memory_percent']),
@@ -109,7 +109,9 @@ def diagnose_issue():
     if mem_info.percent >= 80:
         print("Memory-bound issue detected")
         print(top_memory_processes)
-        return top_memory_processes
+        processes_causing_memory_usage = [p for p in psutil.process_iter(['pid', 'name', 'cpu_percent']) if p.info['name'] in top_memory_processes]
+        
+        return processes_causing_memory_usage
 
     # 3. Check swap issues
     swap_info = psutil.swap_memory()
@@ -153,8 +155,16 @@ def monitor_system():
         print(f"High load detected: {load1}")
         
         if args.loadwatchmode.lower() == 'true':
-            loadwatch_functions.wait_for_loadwatch()  # Wait for Loadwatch to finish if it's running
-            loadwatch_functions.create_and_log_file()  # Log the server stats
+            time_result = loadwatch_functions.wait_for_loadwatch()  # Wait for Loadwatch to finish if it's running
+            if time_result == "old":
+                print("Loadwatch file is too old. Creating a log file.")
+                log_path = loadwatch_functions.create_and_log_file()
+            elif time_result == "good":
+                print("Loadwatch file is within the acceptable time range.")
+                log_path = loadwatch_functions.copy_loadwatch_file()
+                if log_path == None:
+                    print("No recent Loadwatch file found. Creating a log file.")
+                    log_path = loadwatch_functions.create_and_log_file()
         elif args.loadwatchmode.lower() == 'false':
             latest_file = loadwatch_functions.find_latest_loadwatch_file()
             if latest_file:
@@ -162,7 +172,7 @@ def monitor_system():
                 # Here you can move the file to the desired directory or perform other actions
             else:
                 print("No recent Loadwatch file found. Creating a log file.")
-                loadwatch_functions.create_and_log_file()  # Log the server stats as fallback
+                log_path = loadwatch_functions.create_and_log_file()  # Log the server stats as fallback
 
             
         # Get a list of all running processes
@@ -227,8 +237,8 @@ def monitor_system():
                     try:
                         with open(path['path'], 'r') as file:
                             lines = file.readlines()[-100:]  # Only read the last 100 lines
-                        print(current_date)
-                        print(one_minute_ago_pattern)
+                        # print(current_date)
+                        # print(one_minute_ago_pattern)
                         recentlogs = []
                         for line in lines:
                             if current_pattern in line or one_minute_ago_pattern in line:
@@ -239,14 +249,22 @@ def monitor_system():
 
                         #
                         # Combine the logs
-                        recentlogs_combined = "".join(recentlogs)
+                        print(len(recentlogs))
+                        if len(recentlogs) > 0:
+                            
+                            recentlogs_combined = "".join(recentlogs)
 
 
-                        if "-- No entries --" not in recentlogs:
-                            if args.output == "email":
-                                email.send_email("Alert: High load!", "High load detected on the server." + recentlogs, "admin@example.com", "alerts@example.com", "smtp.example.com", 465, "login", "password")
-                            elif args.output == "logs":
-                                logs.log_to_file("High load detected!" + recentlogs_combined, f"lw_{name}_{current_date}.log")
+                            if "-- No entries --" not in recentlogs:
+                                if args.output == "email":
+                                    email.send_email("Alert: High load!", "High load detected on the server." + recentlogs, "admin@example.com", "alerts@example.com", "smtp.example.com", 465, "login", "password")
+                                elif args.output == "logs":
+                                    current_time = datetime.now()
+                                    formatted_time = current_time.strftime("%Y-%m-%d.%H.%M")
+                                    print(recentlogs_combined)
+                                    logs.log_to_file("High load detected!" + recentlogs_combined, f"lw_{name}_{formatted_time}.log", log_path=log_path)
+                        else:
+                            print(f"No recent logs for {name} in {path['path']}.")
                     except Exception as e:
                         print(f"Error reading logs from {path['path']}: {e}")
                         continue
@@ -260,7 +278,7 @@ def monitor_system():
                     if args.output == "email":
                         email.send_email("Alert: High load!", "High load detected on the server." + recentlogs, "admin@example.com", "alerts@example.com", "smtp.example.com", 465, "login", "password")
                     elif args.output == "logs":
-                        logs.log_to_file("High load detected!" + recentlogs)
+                        logs.log_to_file("High load detected!" + recentlogs, log_path=log_path)
                 else:
                     print(f"No recent logs for {name} in journalctl.")
 

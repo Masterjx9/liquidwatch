@@ -3,26 +3,47 @@ import psutil
 import subprocess   
 from datetime import datetime, timedelta
 import time
+import shutil
 
 
-def wait_for_loadwatch(loadwatch_dir='/var/log/loadwatch', buffer_minutes=4):
+def wait_for_loadwatch(loadwatch_dir='/var/log/loadwatch', buffer_minutes=4, old_threshold_minutes=10):
     """
     Waits for Loadwatch to finish its operation based on the modification time of the output files.
 
     :param loadwatch_dir: Directory where Loadwatch stores its output files.
     :param buffer_minutes: Buffer time in minutes to ensure Loadwatch has finished its operations.
-    :return: None
+    :param old_threshold_minutes: Threshold time in minutes after which the file is considered old.
+    :return: Status of the file, "good" if within threshold, "old" if past the old threshold, and None otherwise.
     """
-    now = datetime.now()
     buffer_time = timedelta(minutes=buffer_minutes)
+    old_threshold_time = timedelta(minutes=old_threshold_minutes)
+    first_detected_file = None
 
     while True:
-        latest_file = find_latest_loadwatch_file(loadwatch_dir)
-        if latest_file:
-            mod_time = datetime.fromtimestamp(os.path.getmtime(latest_file))
-            if now - mod_time > buffer_time:
-                break
+        now = datetime.now()
+        
+        if not first_detected_file:
+            first_detected_file = find_latest_loadwatch_file(loadwatch_dir)
+        
+        if first_detected_file:
+            mod_time = datetime.fromtimestamp(os.path.getmtime(first_detected_file))
+            time_difference = now - mod_time
+            
+            print(f"First detected file: {first_detected_file}")
+            print(f"File modification time: {mod_time}")
+            print(f"Current time: {now}")
+            print(f"Time difference: {time_difference}")
+            print(f"Buffer time: {buffer_time}")
+            print(f"Old threshold time: {old_threshold_time}")
+            
+            if time_difference > old_threshold_time:
+                print("File is too old.")
+                return "old"
+            elif buffer_time <= time_difference <= old_threshold_time:
+                print("File is within the acceptable time range.")
+                return "good"
         time.sleep(60)  # Wait for 1 minute before checking again
+
         
 def log_server_stats(file_path, apache_port=80, apache_uri='/server-status'):
     # Gathering system statistics
@@ -96,9 +117,36 @@ def find_latest_loadwatch_file(loadwatch_dir='/var/log/loadwatch', days_threshol
     # Return the path of the latest file, or None if no valid file was found
     return valid_files[0][0] if valid_files else None
 
+def copy_loadwatch_file(loadwatch_dir='/var/log/loadwatch'):
+    latest_file = find_latest_loadwatch_file(loadwatch_dir)
+    if latest_file:
+        # Extract filename from the latest Loadwatch file path
+        _, filename = os.path.split(latest_file)
+        
+        # Remove file extension from filename to create the folder name
+        folder_name = os.path.splitext(filename)[0]
+        
+        # Create the directory with the same name as the Loadwatch file in /var/log/liquidwatch
+        new_directory_path = os.path.join("/var/log/liquidwatch", folder_name)
+        os.makedirs(new_directory_path, exist_ok=True)
+        
+        # Copy the Loadwatch file to the new directory
+        new_file_path = os.path.join(new_directory_path, filename)
+        shutil.copy(latest_file, new_file_path)
+        return new_directory_path
+    else:
+        print("No recent Loadwatch file found. Please ensure Loadwatch is configured and running.")
+        return None
+        
 def create_and_log_file():
+    # Create a timestamped folder in the /var/log/liquidwatch directory
     current_time = datetime.now()
     formatted_time = current_time.strftime("%Y-%m-%d.%H.%M")
-    filename = f"loadwatch_stats_{formatted_time}.log"
-    file_path = os.path.join("", filename)
-    log_server_stats(file_path)
+    folder_name = f"liquidwatch_stats_{formatted_time}"
+    directory_path = os.path.join("/var/log/liquidwatch", folder_name)
+    os.makedirs(directory_path, exist_ok=True)
+    
+    # Create the log file within the new directory
+    log_file_path = os.path.join(directory_path, 'server_stats.log')
+    log_server_stats(log_file_path)
+    return directory_path
